@@ -1,0 +1,90 @@
+databaseChangeLog:
+  - changeSet:
+      id: 001-create-hotel-tables
+      author: cursor
+      changes:
+        - createTable:
+            tableName: hotels
+            columns:
+              - column: { name: id, type: BIGINT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: name, type: VARCHAR(255), constraints: { nullable: false } }
+              - column: { name: description, type: CLOB }
+              - column: { name: brand, type: VARCHAR(255), constraints: { nullable: false } }
+              - column: { name: address_house_number, type: INT, constraints: { nullable: false } }
+              - column: { name: address_street, type: VARCHAR(255), constraints: { nullable: false } }
+              - column: { name: address_city, type: VARCHAR(255), constraints: { nullable: false } }
+              - column: { name: address_country, type: VARCHAR(255), constraints: { nullable: false } }
+              - column: { name: address_post_code, type: VARCHAR(32), constraints: { nullable: false } }
+              - column: { name: contacts_phone, type: VARCHAR(64), constraints: { nullable: false } }
+              - column: { name: contacts_email, type: VARCHAR(255), constraints: { nullable: false } }
+              - column: { name: arrival_check_in, type: VARCHAR(5), constraints: { nullable: false } }
+              - column: { name: arrival_check_out, type: VARCHAR(5) }
+        - createTable:
+            tableName: amenities
+            columns:
+              - column: { name: id, type: BIGINT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: name, type: VARCHAR(255), constraints: { nullable: false, unique: true } }
+        - createTable:
+            tableName: hotel_amenities
+            columns:
+              - column: { name: hotel_id, type: BIGINT, constraints: { nullable: false } }
+              - column: { name: amenity_id, type: BIGINT, constraints: { nullable: false } }
+        - addPrimaryKey:
+            tableName: hotel_amenities
+            columnNames: hotel_id, amenity_id
+            constraintName: pk_hotel_amenities
+        - addForeignKeyConstraint:
+            baseTableName: hotel_amenities
+            baseColumnNames: hotel_id
+            referencedTableName: hotels
+            referencedColumnNames: id
+            constraintName: fk_hotel_amenities_hotel
+            onDelete: CASCADE
+        - addForeignKeyConstraint:
+            baseTableName: hotel_amenities
+            baseColumnNames: amenity_id
+            referencedTableName: amenities
+            referencedColumnNames: id
+            constraintName: fk_hotel_amenities_amenity
+            onDelete: CASCADE
+
+  - changeSet:
+      id: 002-seed-demo-data
+      author: cursor
+      changes:
+        - insert:
+            tableName: hotels
+            columns:
+              - column: { name: id, valueNumeric: 1 }
+              - column: { name: name, value: "DoubleTree by Hilton Minsk" }
+              - column: { name: description, value: "The DoubleTree by Hilton Hotel Minsk offers 193 luxurious rooms in the Belorussian capital and stunning views of Minsk city from the hotel's 20th floor ..." }
+              - column: { name: brand, value: "Hilton" }
+              - column: { name: address_house_number, valueNumeric: 9 }
+              - column: { name: address_street, value: "Pobediteley Avenue" }
+              - column: { name: address_city, value: "Minsk" }
+              - column: { name: address_country, value: "Belarus" }
+              - column: { name: address_post_code, value: "220004" }
+              - column: { name: contacts_phone, value: "+375 17 309-80-00" }
+              - column: { name: contacts_email, value: "doubletreeminsk.info@hilton.com" }
+              - column: { name: arrival_check_in, value: "14:00" }
+              - column: { name: arrival_check_out, value: "12:00" }
+        - insert:
+            tableName: amenities
+            columns:
+              - column: { name: id, valueNumeric: 1 }
+              - column: { name: name, value: "Free parking" }
+        - insert:
+            tableName: amenities
+            columns:
+              - column: { name: id, valueNumeric: 2 }
+              - column: { name: name, value: "Free WiFi" }
+        - insert:
+            tableName: hotel_amenities
+            columns:
+              - column: { name: hotel_id, valueNumeric: 1 }
+              - column: { name: amenity_id, valueNumeric: 1 }
+        - insert:
+            tableName: hotel_amenities
+            columns:
+              - column: { name: hotel_id, valueNumeric: 1 }
+              - column: { name: amenity_id, valueNumeric: 2 }
