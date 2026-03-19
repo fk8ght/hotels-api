@@ -20,13 +20,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler({BadRequestException.class, MethodArgumentNotValidException.class})
     public ResponseEntity<ApiError> handleBadRequest(Exception ex, HttpServletRequest req) {
-        String msg = ex instanceof MethodArgumentNotValidException manve
-                ? manve.getBindingResult().getFieldErrors().stream()
-                .map(fe -> fe.getField() + " " + fe.getDefaultMessage())
-                .findFirst()
-                .orElse("Validation failed")
-                : ex.getMessage();
-        return build(HttpStatus.BAD_REQUEST, msg, req.getRequestURI());
+        return build(HttpStatus.BAD_REQUEST, ex.getMessage(), req.getRequestURI());
     }
 
     @ExceptionHandler(Exception.class)
